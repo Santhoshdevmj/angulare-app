@@ -1,0 +1,24 @@
+<div class="form-container">
+  <h2>Post a Message</h2>
+  <form (ngSubmit)="onSubmit()">
+    <label>Name:</label>
+    <input type="text" [(ngModel)]="name" name="name" required>
+
+    <label>Email:</label>
+    <input type="email" [(ngModel)]="email" name="email" required>
+
+    <label>Personal Message:</label>
+    <textarea [(ngModel)]="post" name="post" required></textarea>
+
+    <button type="submit">Submit</button>
+  </form>
+
+  <div class="messages" *ngIf="submittedMessages.length > 0">
+    <h3>Submitted Messages</h3>
+    <ul>
+      <li *ngFor="let msg of submittedMessages">
+        <strong>{{ msg.name }}</strong> ({{ msg.email }}) says: {{ msg.post }}
+      </li>
+    </ul>
+  </div>
+</div>
