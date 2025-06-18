@@ -1,30 +1,26 @@
-# frontend/Dockerfile
-
-# Stage 1: Build Angular App
-FROM node:20-alpine AS builder
+# Stage 1: Build the Angular app
+FROM node:20-alpine as build
 
 WORKDIR /app
 
-# Install dependencies
 COPY package*.json ./
 RUN npm install
 
-# Copy project files
 COPY . .
+RUN npm run build -- --configuration=production
 
-# Build Angular app for production
-RUN npm run build -- --configuration production
-
-# Stage 2: Serve with Nginx
+# Stage 2: Serve the app with Nginx
 FROM nginx:alpine
 
+# Copy custom Nginx config
+COPY default.conf /etc/nginx/conf.d/default.conf
+
+# Remove default nginx website
 RUN rm -rf /usr/share/nginx/html/*
 
-# Copy built files to Nginx public directory
-COPY --from=builder /app/dist/message-app /usr/share/nginx/html
+# Copy built Angular app to Nginx directory
+COPY --from=build /app/dist/message-app/browser /usr/share/nginx/html
 
-# Expose port 80
 EXPOSE 80
 
-# Start Nginx server
 CMD ["nginx", "-g", "daemon off;"]
